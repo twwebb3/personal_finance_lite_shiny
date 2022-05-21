@@ -5,6 +5,7 @@
 # App Data
 *.csv
 /rsconnect/
+*.Rproj
 
 # Session Data files
 .RData
