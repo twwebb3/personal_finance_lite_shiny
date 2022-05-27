@@ -10,6 +10,12 @@
 library(shiny)
 library(lubridate)
 library(dplyr)
+library(googlesheets4)
+
+gs4_auth(cache = ".secrets", email= "twwebb1991@gmail.com")
+
+url_df <- read.csv("url.csv", stringsAsFactors = F)
+url = url_df$url
 
 # df <- data.frame(date = "", expenditure = "", stringsAsFactors = F)
 
@@ -60,7 +66,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   df <- reactive({
-    source_df <- read.csv('expenditures.csv', stringsAsFactors = F)
+    source_df <- read_sheet(url,sheet = "Sheet1")
     
     if (input$expenditure>0) {
       tempDf <- data.frame(date = input$date,
@@ -73,7 +79,7 @@ server <- function(input, output) {
                        date!="", 
                        month(date)==month(today)) # filter out blanks and last mth
       
-      write.csv(out_df, "expenditures.csv", row.names = F)
+      out_df %>% sheet_write(url,sheet = "Sheet1")
     } else {
       out_df <- source_df
     }
