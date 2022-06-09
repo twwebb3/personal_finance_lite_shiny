@@ -19,7 +19,7 @@ url = url_df$url
 
 # df <- data.frame(date = "", expenditure = "", stringsAsFactors = F)
 
-today <- as.Date(now()) # print this in the app to make sure it refreshes daily
+today <- as.Date(now(tzone="EST")) # print this in the app to make sure it refreshes daily
 mth_start <- as.Date(paste(year(today),
                            month(today),
                            "01", sep="-"))
@@ -28,9 +28,20 @@ mth_end <- as.Date(paste(year(today),
                          "01", sep="-")) -1
 days <- as.Date(mth_start:today, origin = "1970-01-01")
 
+
+days_2 <- as.Date(mth_start:mth_end, origin = "1970-01-01")
+days_2_df <- data.frame(date=days_2)
+days_2_df$week <- week(days_2_df$date)
+max_week <- max(days_2_df$week)
+min_week <- min(days_2_df$week)
+max_week_days <- days_2_df %>% filter(week==max(week)) %>% length()
+if (max_week_days<7) {
+  max_week <- max_week - 1
+}
+
 spend_cap <- 3000
 
-spend_df <- data.frame(week = unique(week(days)), stringsAsFactors = F)
+spend_df <- data.frame(week = min_week:max_week, stringsAsFactors = F)
 spend_df$budget <- spend_cap/length(spend_df$week)
 
 # Define UI for application that draws a histogram
